@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="START" />
+
+    <Button
+        android:id="@+id/btn_read_weight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="READ_WEIGHT" />
+
+    <Button
+        android:id="@+id/btn_locker_on"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LOCKER_ON" />
+
+    <Button
+        android:id="@+id/btn_locker_off"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LOCKER_OFF" />
+</LinearLayout>
