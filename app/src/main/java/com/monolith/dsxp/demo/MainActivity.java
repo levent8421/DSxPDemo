@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private DeviceManager deviceManager;
 
+    private void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,8 +104,10 @@ public class MainActivity extends AppCompatActivity {
             // 监听锁状态
             LockerDeviceCluster lockerCluster = (LockerDeviceCluster) deviceManager.findCluster(Ds3pClusterUrl.parse(CLUSTER_3));
             lockerCluster.setLockerStateListener(new ExampleLockerListener());
+            showToast("Start Success");
         } catch (Exception e) {
             e.printStackTrace();
+            showToast("Start Error:" + e.getClass().getName() + "/" + e.getMessage());
         }
     }
 
@@ -112,8 +118,10 @@ public class MainActivity extends AppCompatActivity {
         try {
             LockerDeviceCluster lockerCluster = (LockerDeviceCluster) deviceManager.findCluster(Ds3pClusterUrl.parse(CLUSTER_3));
             lockerCluster.unlock();
+            showToast("Unlock success!");
         } catch (Exception e) {
             e.printStackTrace();
+            showToast("Unlock Error:" + e.getClass().getName() + "/" + e.getMessage());
         }
     }
 
@@ -124,8 +132,10 @@ public class MainActivity extends AppCompatActivity {
         try {
             LockerDeviceCluster lockerCluster = (LockerDeviceCluster) deviceManager.findCluster(Ds3pClusterUrl.parse(CLUSTER_3));
             lockerCluster.lock();
+            showToast("Lock success!");
         } catch (Exception e) {
             e.printStackTrace();
+            showToast("Lock Error:" + e.getClass().getName() + "/" + e.getMessage());
         }
     }
 
@@ -141,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Weight1=" + weight1 + "/weight2=" + weight2, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
+            showToast("Read Error:" + e.getClass().getName() + "/" + e.getMessage());
         }
     }
 }
