@@ -31,18 +31,19 @@ import java.util.List;
  * @author Levent8421
  */
 public class MainActivity extends AppCompatActivity {
+    private static final String CONN = "ds3p:uart://%2Fdev%2FttyS3:115200";
     /**
      * 重力设备1编号
      */
-    public static final String CLUSTER_1 = "ds3p:uart://%2Fdev%2FttyS1:115200/WT/L1-1-1";
+    public static final String CLUSTER_1 = CONN + "/WT/L1-1-1";
     /**
      * 重力设备2编号
      */
-    public static final String CLUSTER_2 = "ds3p:uart://%2Fdev%2FttyS1:115200/WT/L1-1-2";
+    public static final String CLUSTER_2 = CONN + "/WT/L1-1-2";
     /**
      * 锁设备编号
      */
-    public static final String CLUSTER_3 = "ds3p:uart://%2Fdev%2FttyS1:115200/LK/L2-1-1";
+    public static final String CLUSTER_3 = CONN + "/LK/L2-1-1";
 
     public static final String[] DEVICE_URIS = {
             CLUSTER_1 + "/1?device=weight_sensor",
