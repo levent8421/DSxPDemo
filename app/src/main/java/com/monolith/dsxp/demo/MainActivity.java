@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.monolith.dsxp.demo.cardreader.CardDataListener;
+import com.monolith.dsxp.demo.cardreader.CardReaderWrapper;
 import com.monolith.dsxp.demo.cardreader.iccard.JTICCardReaderWrapper;
 import com.monolith.dsxp.demo.serial.Ds2pSerialFactory;
 import com.monolith.dsxp.demo.serial.Ds2pSerialPortWrapper;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
      * Device Manager是一个重量级对象，应避免系统内频繁创建
      */
     private DeviceManager deviceManager;
-    private JTICCardReaderWrapper cardReader;
+    private CardReaderWrapper cardReader;
 
     private TextView text_ic_port_name;
     private TextView text_ic_data;
