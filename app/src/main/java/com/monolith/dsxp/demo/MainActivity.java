@@ -1,16 +1,23 @@
 package com.monolith.dsxp.demo;
 
+import android.content.SyncContext;
 import android.os.Bundle;
+import android.os.Handler;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.monolith.dsxp.demo.cardreader.CardDataListener;
+import com.monolith.dsxp.demo.cardreader.iccard.JTICCardReaderWrapper;
 import com.monolith.dsxp.demo.serial.Ds2pSerialFactory;
+import com.monolith.dsxp.demo.serial.Ds2pSerialPortWrapper;
 import com.monolith.dsxp.driver.DeviceManager;
 import com.monolith.dsxp.driver.building.ds3p.Ds3pDeviceFactory;
 import com.monolith.dsxp.driver.cluster.locker.LockerDeviceCluster;
 import com.monolith.dsxp.driver.cluster.weight.DefaultCountingStrategy;
 import com.monolith.dsxp.driver.cluster.weight.WeightDeviceCluster;
+import com.monolith.dsxp.driver.conn.serial.SerialWrapper;
 import com.monolith.dsxp.driver.group.DeviceGroup;
 import com.monolith.dsxp.driver.identification.ds3p.Ds3pClusterUrl;
 import com.monolith.dsxp.driver.identification.ds3p.Ds3pDeviceUrl;
@@ -18,6 +25,8 @@ import com.monolith.dsxp.driver.impl.DefaultDeviceManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,15 +54,17 @@ public class MainActivity extends AppCompatActivity {
      */
     public static final String CLUSTER_3 = CONN + "/LK/L2-1-1";
 
-    public static final String[] DEVICE_URIS = {
-            CLUSTER_1 + "/1?device=weight_sensor",
-            CLUSTER_2 + "/2?device=weight_sensor",
-            CLUSTER_3 + "/230-X1Y1?device=locker_hold_off",
-    };
+    public static final String[] DEVICE_URIS = {CLUSTER_1 + "/1?device=weight_sensor", CLUSTER_2 + "/2?device=weight_sensor", CLUSTER_3 + "/230-X1Y1?device=locker_hold_off",};
     /**
      * Device Manager是一个重量级对象，应避免系统内频繁创建
      */
     private DeviceManager deviceManager;
+    private JTICCardReaderWrapper cardReader;
+
+    private TextView text_ic_port_name;
+    private TextView text_ic_data;
+
+    private Handler mainLoop = new Handler();
 
     private void showToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
@@ -67,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_read_weight).setOnClickListener(v -> this.readWeight());
         findViewById(R.id.btn_locker_on).setOnClickListener(v -> this.lockerOn());
         findViewById(R.id.btn_locker_off).setOnClickListener(v -> this.lockerOff());
+        findViewById(R.id.btn_ic_open).setOnClickListener(v -> this.icOpen());
+        findViewById(R.id.btn_ic_close).setOnClickListener(v -> this.icClose());
+        text_ic_port_name = findViewById(R.id.text_ic_port_name);
+        text_ic_data = findViewById(R.id.text_ic_data);
     }
 
     private void startDsxpService() {
@@ -154,5 +169,69 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
             showToast("Read Error:" + e.getClass().getName() + "/" + e.getMessage());
         }
+    }
+
+    private void icOpen() {
+        try {
+            // 读卡器端口
+            String portName = "/dev/ttyS3";
+            // 读卡器通讯速率
+            int baudrate = 38400;
+            if (cardReader == null) {
+                text_ic_port_name.setText(portName + ":" + baudrate);
+                // 生成读卡器串口对象
+                SerialWrapper serial = Ds2pSerialFactory.INSTANCE.create(portName, baudrate);
+                // 生成读卡器操作对象
+                cardReader = new JTICCardReaderWrapper(serial);
+                // 设置读卡事件监听器
+                cardReader.setListener(new CardDataListener() {
+                    @Override
+                    public void onStringData(int dataType, String data) {
+                        // 收到读卡数据的字符串通知
+                        mainLoop.post(() -> {
+                            // 将卡数据显示到界面
+                            text_ic_data.setText("EPC: [" + new Date() + "] " + data);
+                        });
+                    }
+
+                    @Override
+                    public void onOriginalData(int dataType, byte[] data) {
+                        // 收到读卡数据的原始字节数据通知
+                    }
+
+                    @Override
+                    public void onError(String msg) {
+                        // 收到读卡错误数据通知
+                        mainLoop.post(() -> {
+                            text_ic_data.setText("Error: " + msg);
+                        });
+                    }
+                });
+            }
+            if (!cardReader.isOpened()) {
+                // 打开读卡器
+                cardReader.open();
+                text_ic_data.setText("Opened");
+                // 开始接收读卡数据
+                cardReader.startRead();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast("IC Error:" + e.getClass().getName() + "/" + e.getMessage());
+        }
+    }
+
+    private void icClose() {
+        try {
+            if (cardReader != null) {
+                // 关闭读卡器
+                cardReader.close();
+                text_ic_data.setText("Closed");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast("IC Error:" + e.getClass().getName() + "/" + e.getMessage());
+        }
+
     }
 }

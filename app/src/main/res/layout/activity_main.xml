@@ -30,4 +30,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="LOCKER_OFF" />
+
+    <TextView
+        android:id="@+id/text_ic_port_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btn_ic_open"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="IC Open" />
+
+    <Button
+        android:id="@+id/btn_ic_close"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="IC Close" />
+
+    <TextView
+        android:id="@+id/text_ic_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
